@@ -5109,6 +5109,11 @@ pub fn Wrap(comptime bindings: anytype) type {
         //     data: ?*const anyopaque,
         // ) callconv(.C) void = undefined;
 
+        //pub var bindTextures: *const fn (first: Uint, count: Sizei, textures: [*c]const Uint) callconv(.C) void = undefined;
+        pub fn bindTextures(first: Uint, textures: []const Texture) void {
+            bindings.bindTextures(first, @intCast(textures.len), @as([*c]const Uint, @ptrCast(textures.ptr)));
+        }
+
         //--------------------------------------------------------------------------------------------------
         //
         // OpenGL 4.5 (Core Profile)
@@ -5121,6 +5126,22 @@ pub fn Wrap(comptime bindings: anytype) type {
         //     width: Sizei,
         //     height: Sizei,
         // ) callconv(.C) void = undefined;
+        pub fn textureStorage2D(args: struct {
+            texture: Texture,
+            levels: u32,
+            internal_format: InternalFormat,
+            width: u32,
+            height: u32,
+        }) void {
+            bindings.textureStorage2D(
+                args.texture.name,
+                @bitCast(args.levels),
+                @intFromEnum(args.internal_format),
+                @bitCast(args.width),
+                @bitCast(args.height),
+            );
+        }
+
         // pub var textureStorage2DMultisample: *const fn (
         //     texture: Uint,
         //     samples: Sizei,
@@ -5129,7 +5150,55 @@ pub fn Wrap(comptime bindings: anytype) type {
         //     height: Sizei,
         //     fixedsamplelocations: Boolean,
         // ) callconv(.C) void = undefined;
+
         // pub var createTextures: *const fn (target: Enum, n: Sizei, textures: [*c]Uint) callconv(.C) void = undefined;
+        pub fn createTexture(target: TextureTarget, ptr: *Texture) void {
+            bindings.createTextures(@intFromEnum(target), 1, @as([*c]Uint, @ptrCast(ptr)));
+        }
+        pub fn createTextures(target: TextureTarget, textures: []Texture) void {
+            bindings.createTextures(@intFromEnum(target), @intCast(textures.len), @as([*c]Uint, @ptrCast(textures.ptr)));
+        }
+
+        // pub var textureParameteri: *const fn (texture: Uint, pname: Enum, param: Int) callconv(.C) void = undefined;
+        pub fn textureParameteri(texture: Texture, pname: TexParameter, param: i32) void {
+            bindings.textureParameteri(texture.name, @intFromEnum(pname), param);
+        }
+
+        // pub var textureSubImage2D: *const fn (
+        //     texture: Uint,
+        //     level: Int,
+        //     xoffset: Int,
+        //     yoffset: Int,
+        //     width: Sizei,
+        //     height: Sizei,
+        //     format: Enum,
+        //     @"type": Enum,
+        //     pixels: ?*const anyopaque,
+        // ) callconv(.C) void = undefined;
+        pub fn textureSubImage2D(args: struct {
+            texture: Texture,
+            level: u32,
+            xoffset: u32,
+            yoffset: u32,
+            width: u32,
+            height: u32,
+            format: PixelFormat,
+            pixel_type: PixelType,
+            data: ?[*]const u8,
+        }) void {
+            bindings.textureSubImage2D(
+                args.texture.name,
+                @bitCast(args.level),
+                @bitCast(args.xoffset),
+                @bitCast(args.yoffset),
+                @bitCast(args.width),
+                @bitCast(args.height),
+                @intFromEnum(args.format),
+                @intFromEnum(args.pixel_type),
+                args.data,
+            );
+        }
+
         // pub var createFramebuffers: *const fn (n: Sizei, framebuffers: [*c]Uint) callconv(.C) void = undefined;
         // pub var namedFramebufferTexture: *const fn (
         //     framebuffer: Uint,

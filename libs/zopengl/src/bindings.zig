@@ -2937,6 +2937,7 @@ pub var clearTexImage: *const fn (
     type: Enum,
     data: ?*const anyopaque,
 ) callconv(.C) void = undefined;
+pub var bindTextures: *const fn (first: Uint, count: Sizei, textures: [*c]const Uint) callconv(.C) void = undefined;
 //--------------------------------------------------------------------------------------------------
 //
 // OpenGL 4.5 (Core Profile)
@@ -2958,6 +2959,18 @@ pub var textureStorage2DMultisample: *const fn (
     fixedsamplelocations: Boolean,
 ) callconv(.C) void = undefined;
 pub var createTextures: *const fn (target: Enum, n: Sizei, textures: [*c]Uint) callconv(.C) void = undefined;
+pub var textureParameteri: *const fn (texture: Uint, pname: Enum, param: Int) callconv(.C) void = undefined;
+pub var textureSubImage2D: *const fn (
+    texture: Uint,
+    level: Int,
+    xoffset: Int,
+    yoffset: Int,
+    width: Sizei,
+    height: Sizei,
+    format: Enum,
+    @"type": Enum,
+    pixels: ?*const anyopaque,
+) callconv(.C) void = undefined;
 pub var createFramebuffers: *const fn (n: Sizei, framebuffers: [*c]Uint) callconv(.C) void = undefined;
 pub var namedFramebufferTexture: *const fn (
     framebuffer: Uint,

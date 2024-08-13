@@ -643,6 +643,7 @@ pub fn loadCoreProfile(loader: LoaderFn, major: u32, minor: u32) !void {
     // OpenGL 4.4
     if (ver >= 44) {
         try load("glClearTexImage", .{&bindings.clearTexImage});
+        try load("glBindTextures", .{&bindings.bindTextures});
         // TODO
     }
 
@@ -651,6 +652,8 @@ pub fn loadCoreProfile(loader: LoaderFn, major: u32, minor: u32) !void {
         try load("glTextureStorage2D", .{&bindings.textureStorage2D});
         try load("glTextureStorage2DMultisample", .{&bindings.textureStorage2DMultisample});
         try load("glCreateTextures", .{&bindings.createTextures});
+        try load("glTextureParameteri", .{&bindings.textureParameteri});
+        try load("glTextureSubImage2D", .{&bindings.textureSubImage2D});
         try load("glCreateFramebuffers", .{&bindings.createFramebuffers});
         try load("glNamedFramebufferTexture", .{&bindings.namedFramebufferTexture});
         try load("glBlitNamedFramebuffer", .{&bindings.blitNamedFramebuffer});
