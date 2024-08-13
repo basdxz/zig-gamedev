@@ -664,6 +664,7 @@ pub fn loadCoreProfile(loader: LoaderFn, major: u32, minor: u32) !void {
 
     // OpenGL 4.6
     if (ver >= 46) {
+        try load("glSpecializeShader", .{&bindings.specializeShader});
         // TODO
     }
 }

@@ -2542,6 +2542,12 @@ pub fn Wrap(comptime bindings: anytype) type {
         }
 
         // pub var detachShader: *const fn (program: Uint, shader: Uint) callconv(.C) void = undefined;
+        pub fn detachShader(program: Program, shader: Shader) void {
+            assert(@as(Uint, @bitCast(program)) > 0);
+            assert(@as(Uint, @bitCast(shader)) > 0);
+            bindings.detachShader(@as(Uint, @bitCast(program)), @as(Uint, @bitCast(shader)));
+        }
+
         // pub var disableVertexAttribArray: *const fn (index: Uint) callconv(.C) void = undefined;
 
         // pub var enableVertexAttribArray: *const fn (index: Uint) callconv(.C) void = undefined;
@@ -2832,6 +2838,11 @@ pub fn Wrap(comptime bindings: anytype) type {
         }
 
         // pub var validateProgram: *const fn (program: Uint) callconv(.C) void = undefined;
+        pub fn validateProgram(program: Program) void {
+            assert(@as(Uint, @bitCast(program)) > 0);
+            bindings.validateProgram(@as(Uint, @bitCast(program)));
+        }
+
         // pub var vertexAttrib1d: *const fn (index: Uint, x: Double) callconv(.C) void = undefined;
         // pub var vertexAttrib1dv: *const fn (index: Uint, v: [*c]const Double) callconv(.C) void = undefined;
         // pub var vertexAttrib1f: *const fn (index: Uint, x: Float) callconv(.C) void = undefined;
@@ -4179,6 +4190,26 @@ pub fn Wrap(comptime bindings: anytype) type {
         //     binary: *const anyopaque,
         //     length: Sizei,
         // ) callconv(.C) void = undefined;
+        pub fn shaderBinary(
+            shaders: []const Shader,
+            binary_format: enum(Enum) {
+                shader_binary_format_spir_v = SHADER_BINARY_FORMAT_SPIR_V,
+            },
+            binary: []const u8,
+        ) void {
+            assert(shaders.len > 0);
+            assert(shaders.len <= std.math.maxInt(u32));
+            assert(binary.len > 0);
+            assert(binary.len <= std.math.maxInt(u32));
+            bindings.shaderBinary(
+                @as(Sizei, @bitCast(@as(u32, @intCast(shaders.len)))),
+                @as([*]const Uint, @ptrCast(shaders.ptr)),
+                @intFromEnum(binary_format),
+                @as(*const anyopaque, @ptrCast(binary.ptr)),
+                @as(Sizei, @bitCast(@as(u32, @intCast(binary.len)))),
+            );
+        }
+
         // pub var getShaderPrecisionFormat: *const fn (
         //     shader_type: Enum,
         //     precisionType: Enum,
@@ -4988,6 +5019,54 @@ pub fn Wrap(comptime bindings: anytype) type {
         //     length: *Sizei,
         //     label: [*c]Char,
         // ) callconv(.C) void = undefined;
+
+        //--------------------------------------------------------------------------------------------------
+        //
+        // OpenGL 4.6 (Core Profile)
+        //
+        //--------------------------------------------------------------------------------------------------
+        pub const SHADER_BINARY_FORMAT_SPIR_V = bindings.SHADER_BINARY_FORMAT_SPIR_V;
+
+        // pub var specializeShader: *const fn (
+        //     shader: Uint,
+        //     pEntryPoint: [*c]const Char,
+        //     numSpecializationConstants: Uint,
+        //     pConstantIndex: [*c]const Uint,
+        //     pConstantValue: [*c]const Uint,
+        // ) callconv(.C) void = undefined;
+        pub fn specializeShader(
+            shader: Shader,
+            entryPoint: [:0]const u8,
+            constantIndex: ?[]const Uint,
+            constantValue: ?[]const Uint,
+        ) void {
+            assert(@as(Uint, @bitCast(shader)) > 0);
+            var numSpecializationConstants: Uint = 0;
+            var pConstantIndex: [*c]const Uint = null;
+            var pConstantValue: [*c]const Uint = null;
+            if (constantIndex) |i| {
+                if (constantValue) |v| {
+                    assert(i.len == v.len);
+                    const num_constants = i.len;
+                    assert(num_constants >= 0);
+                    if (num_constants > 0) {
+                        assert(num_constants <= std.math.maxInt(u32));
+                        numSpecializationConstants = @as(Uint, @bitCast(@as(u32, @intCast(num_constants))));
+                        pConstantIndex = @as([*c]const Uint, @ptrCast(i.ptr));
+                        pConstantValue = @as([*c]const Uint, @ptrCast(v.ptr));
+                    }
+                } else {
+                    unreachable;
+                }
+            }
+            bindings.specializeShader(
+                @as(Uint, @bitCast(shader)),
+                @as([*c]const Char, @ptrCast(entryPoint.ptr)),
+                numSpecializationConstants,
+                pConstantIndex,
+                pConstantValue,
+            );
+        }
 
         //------------------------------------------------------------------------------------------
         //

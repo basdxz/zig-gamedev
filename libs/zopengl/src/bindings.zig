@@ -2991,6 +2991,20 @@ pub var bindTextureUnit: *const fn (unit: Uint, texture: Uint) callconv(.C) void
 pub var textureBarrier: *const fn () callconv(.C) void = undefined;
 //--------------------------------------------------------------------------------------------------
 //
+// OpenGL 4.6 (Core Profile)
+//
+//--------------------------------------------------------------------------------------------------
+pub const SHADER_BINARY_FORMAT_SPIR_V = 0x9551;
+
+pub var specializeShader: *const fn (
+    shader: Uint,
+    pEntryPoint: [*c]const Char,
+    numSpecializationConstants: Uint,
+    pConstantIndex: [*c]const Uint,
+    pConstantValue: [*c]const Uint,
+) callconv(.C) void = undefined;
+//--------------------------------------------------------------------------------------------------
+//
 // OpenGL 1.0 and 1.1 (Compatibility Profile)
 //
 //--------------------------------------------------------------------------------------------------
