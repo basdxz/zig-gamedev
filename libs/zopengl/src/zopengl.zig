@@ -659,6 +659,13 @@ pub fn loadCoreProfile(loader: LoaderFn, major: u32, minor: u32) !void {
         try load("glNamedBufferStorage", .{&bindings.namedBufferStorage});
         try load("glBindTextureUnit", .{&bindings.bindTextureUnit});
         try load("glTextureBarrier", .{&bindings.textureBarrier});
+        try load("glCreateVertexArrays", .{&bindings.createVertexArrays});
+        try load("glEnableVertexArrayAttrib", .{&bindings.enableVertexArrayAttrib});
+        try load("glVertexArrayAttribBinding", .{&bindings.vertexArrayAttribBinding});
+        try load("glVertexArrayAttribFormat", .{&bindings.vertexArrayAttribFormat});
+        try load("glVertexArrayElementBuffer", .{&bindings.vertexArrayElementBuffer});
+        try load("glVertexArrayVertexBuffer", .{&bindings.vertexArrayVertexBuffer});
+        try load("glNamedBufferSubData", .{&bindings.namedBufferSubData});
         // TODO
     }
 

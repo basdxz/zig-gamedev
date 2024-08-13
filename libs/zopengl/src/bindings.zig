@@ -2925,6 +2925,11 @@ pub var shaderStorageBlockBinding: *const fn (
 // OpenGL 4.4 (Core Profile)
 //
 //--------------------------------------------------------------------------------------------------
+pub const MAP_PERSISTENT_BIT = 0x40;
+pub const MAP_COHERENT_BIT = 0x80;
+pub const DYNAMIC_STORAGE_BIT = 0x100;
+pub const CLIENT_STORAGE_BIT = 0x200;
+
 pub var clearTexImage: *const fn (
     texture: Uint,
     level: Int,
@@ -2989,6 +2994,35 @@ pub var namedBufferStorage: *const fn (
 ) callconv(.C) void = undefined;
 pub var bindTextureUnit: *const fn (unit: Uint, texture: Uint) callconv(.C) void = undefined;
 pub var textureBarrier: *const fn () callconv(.C) void = undefined;
+pub var createVertexArrays: *const fn (n: Sizei, buffers: [*c]Uint) callconv(.C) void = undefined;
+pub var enableVertexArrayAttrib: *const fn (vaobj: Uint, index: Uint) callconv(.C) void = undefined;
+pub var vertexArrayAttribBinding: *const fn (
+    vaobj: Uint,
+    attribindex: Uint,
+    bindingindex: Uint,
+) callconv(.C) void = undefined;
+pub var vertexArrayAttribFormat: *const fn (
+    vaobj: Uint,
+    attribindex: Uint,
+    size: Int,
+    type: Enum,
+    normalized: Boolean,
+    relativeoffset: Uint,
+) callconv(.C) void = undefined;
+pub var vertexArrayElementBuffer: *const fn (vaobj: Uint, index: Uint) callconv(.C) void = undefined;
+pub var vertexArrayVertexBuffer: *const fn (
+    vaobj: Uint,
+    bindingindex: Uint,
+    buffer: Uint,
+    offset: Intptr,
+    stride: Sizei,
+) callconv(.C) void = undefined;
+pub var namedBufferSubData: *const fn (
+    buffer: Uint,
+    offset: Intptr,
+    size: Sizeiptr,
+    data: ?*const anyopaque,
+) callconv(.C) void = undefined;
 //--------------------------------------------------------------------------------------------------
 //
 // OpenGL 4.6 (Core Profile)
