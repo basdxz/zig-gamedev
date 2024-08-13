@@ -114,6 +114,7 @@ pub fn Wrap(comptime bindings: anytype) type {
             // OpenGL 4.3 (Core Profile)
             //--------------------------------------------------------------------------------------
             debug_output = DEBUG_OUTPUT,
+            debug_output_synchronous = DEBUG_OUTPUT_SYNCHRONOUS,
         };
 
         pub const StringParamName = enum(Enum) {
@@ -4868,6 +4869,7 @@ pub fn Wrap(comptime bindings: anytype) type {
             userParam: ?*const anyopaque,
         ) void;
         pub const DEBUG_OUTPUT = bindings.DEBUG_OUTPUT;
+        pub const DEBUG_OUTPUT_SYNCHRONOUS = bindings.DEBUG_OUTPUT_SYNCHRONOUS;
         pub const DEBUG_SOURCE_API = bindings.DEBUG_SOURCE_API;
         pub const DEBUG_SOURCE_WINDOW_SYSTEM = bindings.DEBUG_SOURCE_WINDOW_SYSTEM;
         pub const DEBUG_SOURCE_SHADER_COMPILER = bindings.DEBUG_SOURCE_SHADER_COMPILER;
@@ -4896,6 +4898,31 @@ pub fn Wrap(comptime bindings: anytype) type {
         //     ids: [*c]const Uint,
         //     enabled: Boolean,
         // ) callconv(.C) void = undefined;
+        pub fn debugMessageControl(
+            source: ?DebugSource,
+            @"type": ?DebugType,
+            severity: ?DebugSeverity,
+            ids: ?[] Uint,
+            enabled: bool,
+        ) void {
+            var count : Sizei = 0;
+            var raw_ids : [*c]const Uint = null;
+            if (ids) |v| {
+                assert(v.len > 0);
+                assert(v.len <= std.math.maxInt(u32));
+                count = @as(Sizei, @bitCast(@as(u32, @intCast(v.len))));
+                raw_ids = @as([*c]Uint, @ptrCast(v.ptr));
+            }
+            bindings.debugMessageControl(
+                if (source) |v| @intFromEnum(v) else bindings.DONT_CARE,
+                if (@"type") |v| @intFromEnum(v) else bindings.DONT_CARE,
+                if (severity) |v| @intFromEnum(v) else bindings.DONT_CARE,
+                count,
+                raw_ids,
+                @intFromBool(enabled)
+            );
+        }
+
         // pub var debugMessageInsert: *const fn (
         //     source: Enum,
         //     type: Enum,
