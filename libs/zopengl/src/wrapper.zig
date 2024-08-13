@@ -1229,6 +1229,15 @@ pub fn Wrap(comptime bindings: anytype) type {
             triangles_adjacency = TRIANGLES_ADJACENCY,
         };
 
+        pub const ElementIndexType = enum(Enum) {
+            //--------------------------------------------------------------------------------------
+            // OpenGL 1.0 (Core Profile)
+            //--------------------------------------------------------------------------------------
+            unsigned_byte = UNSIGNED_BYTE,
+            unsigned_short = UNSIGNED_SHORT,
+            unsigned_int = UNSIGNED_INT,
+        };
+
         pub const Face = enum(Enum) {
             //--------------------------------------------------------------------------------------
             // OpenGL 1.0 (Core Profile)
@@ -1966,6 +1975,20 @@ pub fn Wrap(comptime bindings: anytype) type {
         //     type: Enum,
         //     indices: ?*const anyopaque,
         // ) callconv(.C) void = undefined;
+        pub fn drawElements(
+            prim_type: PrimitiveType,
+            count: u32,
+            index_type: ElementIndexType,
+            offset: usize,
+        ) void {
+            bindings.drawElements(
+                @intFromEnum(prim_type),
+                @as(Sizei, @bitCast(count)),
+                @intFromEnum(index_type),
+                @ptrFromInt(offset),
+            );
+        }
+
         // pub var polygonOffset: *const fn (factor: Float, units: Float) callconv(.C) void = undefined;
         // pub var copyTexImage1D: *const fn (
         //     target: Enum,
